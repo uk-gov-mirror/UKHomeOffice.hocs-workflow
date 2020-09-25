@@ -28,7 +28,7 @@ pipeline:
     commands:
       - docker build -t hocs-workflow .
     when:
-      branch: [master, refs/tags/*]
+      branch: [master, refs/tags/*, hotfix/*]
       event: [push, tag]
 
   install-docker-image:
@@ -44,7 +44,7 @@ pipeline:
       - docker push quay.io/ukhomeofficedigital/hocs-workflow:build-$${DRONE_BUILD_NUMBER}
       - docker push quay.io/ukhomeofficedigital/hocs-workflow:latest
     when:
-      branch: master
+      branch: [master, hotfix/*]
       event: push
 
 
