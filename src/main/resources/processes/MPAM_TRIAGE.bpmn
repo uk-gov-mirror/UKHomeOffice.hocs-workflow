@@ -486,20 +486,30 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${DIRECTION == "BACKWARD"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_19ce18n" sourceRef="Activity_1rzz5vn" targetRef="EndEvent_1golwf2" />
-    <bpmn:callActivity id="CallActivity_1lg7wrn" name="Multiple Contributions" calledElement="MPAM_MULTIPLE_CONTRIBUTION_PROCESS">
+    <bpmn:callActivity id="CallActivity_1lg7wrn" name="Multiple Contributions" calledElement="MPAM_MULTIPLE_CONTRIBUTIONS">
       <bpmn:extensionElements>
-        <camunda:in source="CreationUUID" target="StageUUID" />
+        <camunda:in source="TriageUUID" target="StageUUID" />
         <camunda:in sourceExpression="MPAM_TRIAGE" target="StageWorkFlow" />
         <camunda:in businessKey="#{execution.processBusinessKey}" />
         <camunda:in variables="all" />
-        <camunda:out source="StageUUID" target="CreationUUID" />
+        <camunda:out source="StageUUID" target="TriageUUID" />
         <camunda:out source="DateReceived" target="DateReceived" />
         <camunda:in sourceExpression="MPAM_TRIAGE" target="StageType" />
         <camunda:in sourceExpression="ALLOCATE_TEAM" target="EmailType" />
         <camunda:in sourceExpression="${execution.processBusinessKey}" target="CaseUUID" />
         <camunda:out sourceExpression="ALLOCATE_TEAM" target="EmailType" />
+        <camunda:in source="QueueTeamUUID" target="AllocationTeamUUID" />
         <camunda:out source="QueueTeamUUID" target="QueueTeamUUID" />
+        <camunda:out source="TriageOutcome" target="TriageOutcome" />
+        <camunda:out source="LastUpdatedByUserUUID" target="TriageUserUUID" />
+        <camunda:in source="TriageUserUUID" target="AllocatedUserUUID" />
+        <camunda:out source="LastUpdatedByUserUUID" target="LastUpdatedByUserUUID" />
+        <camunda:out source="BusAreaStatus" target="BusAreaStatus" />
+        <camunda:in source="&#34;&#34;" target="BusAreaStatus" />
+        <camunda:in source="&#34;&#34;" target="RefTypeStatus" />
+        <camunda:out source="RefTypeStatus" target="RefTypeStatus" />
         <camunda:out source="RefType" target="RefType" />
+        <camunda:out source="LastUpdatedByUserUUID" target="CampaignUserUUID" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1mqvsna</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_10u8lqt</bpmn:outgoing>
