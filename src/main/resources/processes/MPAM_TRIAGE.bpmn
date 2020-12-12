@@ -488,14 +488,13 @@
     <bpmn:sequenceFlow id="Flow_19ce18n" sourceRef="Activity_1rzz5vn" targetRef="EndEvent_1golwf2" />
     <bpmn:callActivity id="CallActivity_1lg7wrn" name="Multiple Contributions" calledElement="MPAM_MULTIPLE_CONTRIBUTIONS">
       <bpmn:extensionElements>
-        <camunda:in source="TriageUUID" target="StageUUID" />
-        <camunda:in sourceExpression="MPAM_TRIAGE" target="StageWorkFlow" />
+        <camunda:in source="${execution.processBusinessKey}" target="StageUUID" />
+        <camunda:in sourceExpression="StageWorkFlow" target="StageWorkFlow" />
         <camunda:in businessKey="#{execution.processBusinessKey}" />
         <camunda:in variables="all" />
         <camunda:out source="StageUUID" target="TriageUUID" />
         <camunda:out source="DateReceived" target="DateReceived" />
-        <camunda:in sourceExpression="MPAM_TRIAGE" target="StageType" />
-        <camunda:in sourceExpression="ALLOCATE_TEAM" target="EmailType" />
+        <camunda:in sourceExpression="MPAM_MULTIPLE_CONTRIBUTIONS_INPUT" target="StageType" />
         <camunda:in sourceExpression="${execution.processBusinessKey}" target="CaseUUID" />
         <camunda:out sourceExpression="ALLOCATE_TEAM" target="EmailType" />
         <camunda:in source="QueueTeamUUID" target="AllocationTeamUUID" />
@@ -510,6 +509,7 @@
         <camunda:out source="RefTypeStatus" target="RefTypeStatus" />
         <camunda:out source="RefType" target="RefType" />
         <camunda:out source="LastUpdatedByUserUUID" target="CampaignUserUUID" />
+        <camunda:in source="BusArea" target="BusArea" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1mqvsna</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_10u8lqt</bpmn:outgoing>
