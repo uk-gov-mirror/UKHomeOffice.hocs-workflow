@@ -16,7 +16,7 @@
       <bpmn:incoming>SequenceFlow_09fnnt9</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0sk755u</bpmn:incoming>
       <bpmn:incoming>Flow_1gxj9d4</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_10u8lqt</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0fbx3i5</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_16wwh9z</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:userTask id="UserTask_0jxw8et" name="Validate User Input">
@@ -175,10 +175,9 @@
     <bpmn:sequenceFlow id="SequenceFlow_0hgwrhp" name="else" sourceRef="ExclusiveGateway_0u9ipo1" targetRef="ExclusiveGateway_1sznr49">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${TriageOutcome != "RequestContribution"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_1mqvsna" name="RequestContribution" sourceRef="ExclusiveGateway_0u9ipo1" targetRef="CallActivity_1lg7wrn">
+    <bpmn:sequenceFlow id="SequenceFlow_1mqvsna" name="RequestContribution" sourceRef="ExclusiveGateway_0u9ipo1" targetRef="Task_0sscwdk">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${TriageOutcome == "RequestContribution"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_10u8lqt" sourceRef="CallActivity_1lg7wrn" targetRef="ServiceTask_05nlmnl" />
     <bpmn:serviceTask id="ServiceTask_06e7e59" name="Business Area" camunda:expression="MPAM_BUSINESS_AREA" camunda:resultVariable="screen">
       <bpmn:incoming>SequenceFlow_071fvv4</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_1mlhuzu</bpmn:incoming>
@@ -486,34 +485,14 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${DIRECTION == "BACKWARD"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_19ce18n" sourceRef="Activity_1rzz5vn" targetRef="EndEvent_1golwf2" />
-    <bpmn:callActivity id="CallActivity_1lg7wrn" name="Multiple Contributions" calledElement="MPAM_MULTIPLE_CONTRIBUTIONS">
+    <bpmn:callActivity id="Task_0sscwdk" name="Multiple Contributions" calledElement="MPAM_MULTIPLE_CONTRIBUTIONS">
       <bpmn:extensionElements>
-        <camunda:in source="${execution.processBusinessKey}" target="StageUUID" />
-        <camunda:in sourceExpression="StageWorkFlow" target="StageWorkFlow" />
         <camunda:in businessKey="#{execution.processBusinessKey}" />
-        <camunda:in variables="all" />
-        <camunda:out source="StageUUID" target="TriageUUID" />
-        <camunda:out source="DateReceived" target="DateReceived" />
-        <camunda:in sourceExpression="MPAM_MULTIPLE_CONTRIBUTIONS_INPUT" target="StageType" />
-        <camunda:in sourceExpression="${execution.processBusinessKey}" target="CaseUUID" />
-        <camunda:out sourceExpression="ALLOCATE_TEAM" target="EmailType" />
-        <camunda:in source="QueueTeamUUID" target="AllocationTeamUUID" />
-        <camunda:out source="QueueTeamUUID" target="QueueTeamUUID" />
-        <camunda:out source="TriageOutcome" target="TriageOutcome" />
-        <camunda:out source="LastUpdatedByUserUUID" target="TriageUserUUID" />
-        <camunda:in source="TriageUserUUID" target="AllocatedUserUUID" />
-        <camunda:out source="LastUpdatedByUserUUID" target="LastUpdatedByUserUUID" />
-        <camunda:out source="BusAreaStatus" target="BusAreaStatus" />
-        <camunda:in source="&#34;&#34;" target="BusAreaStatus" />
-        <camunda:in source="&#34;&#34;" target="RefTypeStatus" />
-        <camunda:out source="RefTypeStatus" target="RefTypeStatus" />
-        <camunda:out source="RefType" target="RefType" />
-        <camunda:out source="LastUpdatedByUserUUID" target="CampaignUserUUID" />
-        <camunda:in source="BusArea" target="BusArea" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1mqvsna</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_10u8lqt</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0fbx3i5</bpmn:outgoing>
     </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_0fbx3i5" sourceRef="Task_0sscwdk" targetRef="ServiceTask_05nlmnl" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="MPAM_TRIAGE">
@@ -535,7 +514,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ggm6pk_di" bpmnElement="Flow_0ggm6pk">
         <di:waypoint x="885" y="639" />
-        <di:waypoint x="954" y="639" />
+        <di:waypoint x="1018" y="639" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0eb5pgl_di" bpmnElement="Flow_0eb5pgl">
         <di:waypoint x="490" y="318" />
@@ -821,24 +800,18 @@
           <dc:Bounds x="1301" y="780" width="24" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_10u8lqt_di" bpmnElement="SequenceFlow_10u8lqt">
-        <di:waypoint x="979" y="299" />
-        <di:waypoint x="979" y="110" />
-        <di:waypoint x="430" y="110" />
-        <di:waypoint x="430" y="516" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1mqvsna_di" bpmnElement="SequenceFlow_1mqvsna">
-        <di:waypoint x="979" y="614" />
-        <di:waypoint x="979" y="383" />
+        <di:waypoint x="1043" y="614" />
+        <di:waypoint x="1043" y="383" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="988" y="420" width="86" height="27" />
+          <dc:Bounds x="1052" y="395" width="86" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0hgwrhp_di" bpmnElement="SequenceFlow_0hgwrhp">
-        <di:waypoint x="1004" y="639" />
+        <di:waypoint x="1068" y="639" />
         <di:waypoint x="1275" y="639" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1017" y="621" width="21" height="14" />
+          <dc:Bounds x="1075" y="621" width="21" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0enh4xh_di" bpmnElement="SequenceFlow_0enh4xh">
@@ -1083,9 +1056,9 @@
         <dc:Bounds x="456" y="1984" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_0u9ipo1_di" bpmnElement="ExclusiveGateway_0u9ipo1" isMarkerVisible="true">
-        <dc:Bounds x="954" y="614" width="50" height="50" />
+        <dc:Bounds x="1018" y="614" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="938" y="666" width="82" height="14" />
+          <dc:Bounds x="1002" y="666" width="82" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_06e7e59_di" bpmnElement="ServiceTask_06e7e59">
@@ -1223,9 +1196,15 @@
       <bpmndi:BPMNShape id="Gateway_1g01f59_di" bpmnElement="Gateway_1g01f59" isMarkerVisible="true">
         <dc:Bounds x="835" y="614" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CallActivity_1lg7wrn_di" bpmnElement="CallActivity_1lg7wrn">
-        <dc:Bounds x="929" y="303" width="100" height="80" />
+      <bpmndi:BPMNShape id="CallActivity_0m8l26e_di" bpmnElement="Task_0sscwdk">
+        <dc:Bounds x="993" y="303" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0fbx3i5_di" bpmnElement="SequenceFlow_0fbx3i5">
+        <di:waypoint x="1043" y="303" />
+        <di:waypoint x="1043" y="141" />
+        <di:waypoint x="430" y="141" />
+        <di:waypoint x="430" y="516" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
