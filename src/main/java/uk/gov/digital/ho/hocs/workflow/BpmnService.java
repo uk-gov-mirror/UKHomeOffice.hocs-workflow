@@ -14,6 +14,7 @@ import uk.gov.digital.ho.hocs.workflow.client.infoclient.dto.TeamDto;
 import uk.gov.digital.ho.hocs.workflow.domain.exception.ApplicationExceptions;
 import uk.gov.digital.ho.hocs.workflow.util.NumberUtils;
 
+import javax.print.DocFlavor;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -154,6 +155,30 @@ public class BpmnService {
         caseworkClient.updateCase(caseUUID, stageUUID, teamsForTopic);
 
         log.debug("######## Updated Primary Topic ########");
+    }
+
+    public void updateTeamIfInactive(String caseUuidString, String stageUuidString, String currentTeamUuid,
+                                     String newTeamUuid, String teamNameUuidToChange, String teamNameToChange) {
+        UUID caseUUID = UUID.fromString(caseUuidString);
+        UUID stageUUID = UUID.fromString(stageUuidString);
+
+        Map<String, String> teamsForTopic = new HashMap<>();
+
+        if (StringUtils.hasText(currentTeamUuid) && StringUtils.hasText(newTeamUuid)) {
+            TeamDto currentTeam = infoClient.getTeam(UUID.fromString(currentTeamUuid));
+            if (!currentTeam.isActive()) {
+                TeamDto newTeam = infoClient.getTeam(UUID.fromString(newTeamUuid));
+                teamsForTopic.put(teamNameUuidToChange, newTeam.getUuid().toString());
+                teamsForTopic.put(teamNameToChange, newTeam.getDisplayName());
+            }
+        }
+
+        if (!teamsForTopic.isEmpty()) {
+            camundaClient.updateTask(stageUUID, teamsForTopic);
+            caseworkClient.updateCase(caseUUID, stageUUID, teamsForTopic);
+        }
+
+        log.debug("######## Updated Team Selection ########");
     }
 
     public void updateTeamSelection(String caseUUIDString, String stageUUIDString, String draftingUUIDString, String privateOfficeUUIDString) {
