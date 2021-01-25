@@ -1,8 +1,10 @@
 package uk.gov.digital.ho.hocs.workflow.processes;
 
+import java.util.Arrays;
 import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
 import org.camunda.bpm.engine.test.mock.Mocks;
+import org.camunda.bpm.extension.mockito.ProcessExpressions;
 import org.camunda.bpm.extension.process_test_coverage.junit.rules.TestCoverageProcessEngineRule;
 import org.camunda.bpm.extension.process_test_coverage.junit.rules.TestCoverageProcessEngineRuleBuilder;
 import org.camunda.bpm.scenario.ProcessScenario;
@@ -15,6 +17,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.digital.ho.hocs.workflow.BpmnService;
+import uk.gov.digital.ho.hocs.workflow.util.CallActivityReturnVariable;
+import uk.gov.digital.ho.hocs.workflow.util.ExecutionVariableSequence;
 
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.withVariables;
 import static org.mockito.ArgumentMatchers.any;
@@ -23,7 +27,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-@Deployment(resources = "processes/MPAM_TRIAGE.bpmn")
+@Deployment(resources = {"processes/MPAM_TRIAGE.bpmn"})
 public class MPAMTriage {
 
     @Rule
@@ -45,56 +49,56 @@ public class MPAMTriage {
     }
 
     @Test
-    public void whenMinisterialChangedToOfficial_thenMinisterialValuesAreCleared() {
+    public void whenReferenceTypeChangeReturnsForward_thenProcessEnds() {
 
         when(processScenario.waitsAtUserTask("Validate_UserInput"))
                 .thenReturn(task -> task.complete(withVariables(
                         "valid", true,
                         "DIRECTION", "UpdateRefType",
-                        "RefType", "Ministerial",
-                        "RefTypeCorrection", "Correction")));
-        when(processScenario.waitsAtUserTask("Validate_ReferenceTypeToOfficial_0ai1ek7"))
-                .thenReturn(task -> task.complete(withVariables(
-                        "valid", true,
-                        "DIRECTION", "FORWARD")));
+                        "RefType", "Ministerial")));
+
+        ProcessExpressions.registerCallActivityMock("MpamChangeReferenceType")
+            .onExecutionDo(new ExecutionVariableSequence(
+                Arrays.asList(
+                    Arrays.asList(
+                        new CallActivityReturnVariable("DIRECTION", "FORWARD"))
+                )
+            ))
+            .deploy(rule);
 
         Scenario.run(processScenario)
                 .startByKey("MPAM_TRIAGE")
                 .execute();
 
-        verify(processScenario).hasCompleted("Screen_ReferenceTypeToOfficial_0pxyggg");
-        verify(processScenario).hasCompleted("Service_UpdateRefTypeToOfficial_07vhlhy");
-        verify(processScenario).hasCompleted("Service_ClearMinisterialValues_05l3eed");
-        verify(processScenario).hasCompleted("Service_SaveRefTypeChangeCaseNote_1sobox0");
         verify(processScenario).hasFinished("EndEvent_MpamTriage");
-        verify(bpmnService).updateValue(any(), any(), eq("RefType"), eq("Official"), eq("RefTypeStatus"), eq("Confirm"));
-        verify(bpmnService).blankCaseValues(any(), any(), eq("MinSignOffTeam"), eq("Addressee"));
     }
 
     @Test
-    public void whenOfficialChangedToMinisterial_thenMinisterialValuesAreNotCleared() {
+    public void whenReferenceTypeChangeReturnsBackward_thenShowValidateUserInputAgain() {
 
         when(processScenario.waitsAtUserTask("Validate_UserInput"))
                 .thenReturn(task -> task.complete(withVariables(
                         "valid", true,
-                        "DIRECTION", "UpdateRefType",
-                        "RefType", "Official",
-                        "RefTypeCorrection", "Correction")));
-        when(processScenario.waitsAtUserTask("Validate_ReferenceTypeToMinisterial_0k42bt1"))
-                .thenReturn(task -> task.complete(withVariables(
-                        "valid", true,
-                        "DIRECTION", "FORWARD")));
+                        "DIRECTION", "UpdateRefType")))
+            .thenReturn(task -> task.complete(withVariables(
+                "valid", true,
+                "DIRECTION", "FORWARD",
+                "TriageOutcome", "SendToDraft")));
+        ProcessExpressions.registerCallActivityMock("MpamChangeReferenceType")
+            .onExecutionDo(new ExecutionVariableSequence(
+                Arrays.asList(
+                    Arrays.asList(
+                        new CallActivityReturnVariable("DIRECTION", "BACKWARD"))
+                )
+            ))
+            .deploy(rule);
 
         Scenario.run(processScenario)
                 .startByKey("MPAM_TRIAGE")
                 .execute();
 
-        verify(processScenario).hasCompleted("Screen_ReferenceTypeToMinisterial_1c5qr22");
-        verify(processScenario).hasCompleted("Service_UpdateRefTypeToMinisterial_0ai6870");
-        verify(processScenario).hasCompleted("Service_SaveRefTypeChangeCaseNote_1sobox0");
+        verify(processScenario, times(2)).hasFinished("Validate_UserInput");
         verify(processScenario).hasFinished("EndEvent_MpamTriage");
-        verify(bpmnService).updateValue(any(), any(), eq("RefType"), eq("Ministerial"), eq("RefTypeStatus"), eq("Confirm"));
-        verify(bpmnService, never()).blankCaseValues(any(), any(), eq("MinSignOffTeam"), eq("Addressee"));
     }
 
     @Test
