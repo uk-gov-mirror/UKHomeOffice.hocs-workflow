@@ -114,7 +114,7 @@ public class MPAMTriageEscalate {
     @Test
     public void whenTransferToOGD_thenAddTransferNote_thenSetDueDate_thenUpdateTeamForTransfer() {
 
-        when(processScenario.waitsAtUserTask("UserTask_1j9nzm5"))
+        when(processScenario.waitsAtUserTask("Validate_UserInput"))
                 .thenReturn(task -> task.complete(withVariables(
                         "valid", true,
                         "DIRECTION", "UpdateBusinessArea")));
@@ -132,13 +132,13 @@ public class MPAMTriageEscalate {
         verify(processScenario).hasCompleted("Activity_0u4xxk6"); // create transfer note
         verify(processScenario).hasCompleted("Activity_0osk3xt"); // set transfer date
         verify(bpmnService).updateTeamByStageAndTexts(any(), any(), eq("MPAM_TRANSFER"), eq("QueueTeamUUID"), eq("QueueTeamName"), eq("BusArea"), eq("RefType"));
-        verify(processScenario).hasFinished("EndEvent_132ofai");
+        verify(processScenario).hasFinished("EndEvent_MpamTriageEscalate");
     }
 
     @Test
     public void whenTransferToOther_thenAddTransferNote_thenSetDueDate_thenUpdateTeamForTransfer() {
 
-        when(processScenario.waitsAtUserTask("UserTask_1j9nzm5"))
+        when(processScenario.waitsAtUserTask("Validate_UserInput"))
                 .thenReturn(task -> task.complete(withVariables(
                         "valid", true,
                         "DIRECTION", "UpdateBusinessArea")));
@@ -156,13 +156,13 @@ public class MPAMTriageEscalate {
         verify(processScenario).hasCompleted("Activity_0u4xxk6"); // create transfer note
         verify(processScenario).hasCompleted("Activity_0osk3xt"); // set transfer date
         verify(bpmnService).updateTeamByStageAndTexts(any(), any(), eq("MPAM_TRANSFER"), eq("QueueTeamUUID"), eq("QueueTeamName"), eq("BusArea"), eq("RefType"));
-        verify(processScenario).hasFinished("EndEvent_132ofai");
+        verify(processScenario).hasFinished("EndEvent_MpamTriageEscalate");
     }
 
     @Test
     public void whenNotTransferToOther_thenUpdateTeamForDraft() {
 
-        when(processScenario.waitsAtUserTask("UserTask_1j9nzm5"))
+        when(processScenario.waitsAtUserTask("Validate_UserInput"))
                 .thenReturn(task -> task.complete(withVariables(
                         "valid", true,
                         "DIRECTION", "UpdateBusinessArea")));
@@ -178,7 +178,7 @@ public class MPAMTriageEscalate {
                 .execute();
 
         verify(bpmnService).updateTeamByStageAndTexts(any(), any(), eq("MPAM_TRIAGE"), eq("QueueTeamUUID"), eq("QueueTeamName"), eq("BusArea"), eq("RefType"));
-        verify(processScenario).hasFinished("EndEvent_132ofai");
+        verify(processScenario).hasFinished("EndEvent_MpamTriageEscalate");
     }
 
 }
