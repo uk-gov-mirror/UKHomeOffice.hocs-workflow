@@ -34,7 +34,7 @@ public class UserPermissionsServiceTest {
     private String uuid1 = Base64UUID.UUIDToBase64String(UUID.fromString("1325fe16-b864-42c7-85c2-7cab2863fe01"));
     private String uuid2 = Base64UUID.UUIDToBase64String(UUID.fromString("f1825c7d-baff-4c09-8056-2166760ccbd2"));
     private String uuid3 = Base64UUID.UUIDToBase64String(UUID.fromString("1c1e2f17-d5d9-4ff6-a023-6c40d76e1e9d"));
-
+    private String uuid4 = Base64UUID.UUIDToBase64String(UUID.fromString("0383d85a-751d-466e-a707-347619067be7"));
 
     @Before
     public void setup() {
@@ -42,6 +42,7 @@ public class UserPermissionsServiceTest {
         request.setMethod("GET");
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
         setupInfoClientMocks();
+        System.out.println("uuid4 : " + uuid4);
     }
 
 
